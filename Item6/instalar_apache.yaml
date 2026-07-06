@@ -1,0 +1,24 @@
+---
+- name: Instalar y configurar Apache en puerto 9999
+  hosts: localhost
+  connection: local
+  become: yes
+  tasks:
+    - name: Instalar servicio Apache2
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Cambiar el puerto de escucha a 9999
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: '^Listen '
+        line: 'Listen 9999'
+      notify: Reiniciar Apache
+
+  handlers:
+    - name: Reiniciar Apache
+      service:
+        name: apache2
+        state: restarted
